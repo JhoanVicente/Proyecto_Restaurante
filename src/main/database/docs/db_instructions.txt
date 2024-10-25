@@ -1,0 +1,13 @@
+=== Manual de instrucciones del uso de la base de datos Resturante Los Pinos ===
+
+1. Creación de la base de datos 'dbLosPinos'
+
+2. Ejecutar los códigos de 'user_defined_data_types.sql'
+
+3. Después tendrás que poner la bd 'db_structure.sql'
+
+4. Luego ejecutar 'schema_management.sql'
+
+5. Ejecutar 'bd_data.sql' para tener los datos de la base de datos. 
+
+6. Finalmente ejecutar  'procedures_management' y 'utility_functions'

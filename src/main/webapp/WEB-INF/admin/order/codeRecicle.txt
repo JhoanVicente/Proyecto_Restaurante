@@ -1,0 +1,49 @@
+//  JSP PAGINACIÓN
+ <script>
+                                        var currentStatus = ${viewStatus};
+
+                                        function goToPage(page) {
+                                            // Incluye el estado actual en la URL
+                                            window.location.href = '/admin/orderDto?viewStatus=' + currentStatus + '&page=' + page;
+                                        }
+                                    </script>
+                                    <c:if test="${empty param.search}">
+                                        <div class="col-12">
+                                            <ul class="page-pagination">
+                                                <c:forEach var="i" begin="1" end="${totalPages}">
+                                                    <li><a href="#" onclick="goToPage(${i})">${i}</a></li>
+                                                </c:forEach>
+                                            </ul>
+                                        </div>
+                                    </c:if>
+// CONTROLADOR DE PAGINACIÓN
+    private void showOrderByStatus(HttpServletRequest request, HttpServletResponse response, int idStatus) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+
+        int page = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
+        String search = request.getParameter("search");
+
+        int rowsPerPage = 10;
+        OrderService orderService = new OrderService();
+        List<Order> listOrderDtoByStatuses;
+        if (search != null && !search.isEmpty()) {
+            listOrderDtoByStatuses = orderService.listOrderByName(search);
+        } else {
+            listOrderDtoByStatuses = orderService.listOrderAllForPagination(idStatus, page, rowsPerPage);
+        }
+        // Calcular el total de páginas
+        int totalRows = orderService.countOrderByStatus(idStatus);
+        int totalPages = (int) Math.ceil((double) totalRows / rowsPerPage);
+        session.setAttribute("totalPages", totalPages);
+
+        session.setAttribute("viewStatus", idStatus);
+        // Para mostrar el estado de los pedidos y poder cambiar su estado
+        session.setAttribute("typeStatus",  new StatusOrderService().listStatusOrder());
+        session.setAttribute("listOrderDtoByStatuses", listOrderDtoByStatuses);
+        session.setAttribute("countStatus1", orderService.countOrderByStatus(1));
+        session.setAttribute("countStatus2", orderService.countOrderByStatus(2));
+        session.setAttribute("countStatus3", orderService.countOrderByStatus(3));
+        session.setAttribute("countStatus4", orderService.countOrderByStatus(4));
+
+        request.getRequestDispatcher("/WEB-INF/admin/orderDto/saleOrder.jsp").forward(request, response);
+    }
